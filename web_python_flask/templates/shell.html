@@ -1,0 +1,53 @@
+{% extends "index.html" %}
+
+{% block content %}
+<h2 style="margin-bottom:10px;">⚠️ Demo Web Shell (ATTT)</h2>
+<p style="color:#555; margin-bottom:20px;">
+    Trang này minh họa cơ chế <strong>Web Shell</strong>:
+    HTTP request → Backend → Hệ điều hành.
+</p>
+
+<div style="
+    background:#000;
+    color:#33ff33;
+    font-family: monospace;
+    padding:16px;
+    border-radius:8px;
+    box-shadow: 0 0 12px rgba(0,255,0,0.35);
+">
+
+    <form method="post" style="margin:0;">
+        <div>
+            www-data@flask:/var/www$
+            <input
+                type="text"
+                name="cmd"
+                value="{{ cmd }}"
+                autofocus
+                autocomplete="off"
+                style="
+                    width:100%;
+                    background:black;
+                    color:#33ff33;
+                    border:none;
+                    outline:none;
+                    font-family: monospace;
+                    font-size:15px;
+                "
+            >
+        </div>
+    </form>
+
+    {% if output %}
+    <pre style="
+        margin-top:12px;
+        white-space: pre-wrap;
+        color:#33ff33;
+    ">{{ output }}</pre>
+    {% endif %}
+</div>
+
+<p style="margin-top:15px; font-size:13px; color:#888;">
+    ⚠️ Demo phục vụ giảng dạy An toàn thông tin. Không triển khai trên môi trường thật.
+</p>
+{% endblock %}

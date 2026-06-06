@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trường Cao dang Kinh te TPHCM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"/>
+    <!-- Nhúng file xử lý Giỏ hàng -->
+    <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+</head>
+<body>
+
+<header>
+<div id="divheader" class="divheader">
+    <div id="banner" class="banner">
+        <div id="topleft">
+            <ul style="display: flex;flex-direction: row;">
+                <li>
+                    <a href="{{ url_for('home') }}">TRANG CHỦ</a>
+                    <a href="#">EGOV</a>
+                    <a href="#">SINH VIÊN</a>
+                </li>
+            </ul>
+            
+        
+        </div>
+        <div id="logo" style="width: 560px;">
+            <img src="{{ url_for('static', filename='images/Ten-truong-do-1000x159.png') }}" width="548"/>
+        </div>
+        <div id="divtimkiem" style="width: 300px;">
+
+            {% if session.get('user') %}
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <span style="color: #a92326; font-weight: bold;">
+                Chào, {{ session['user']['fullname'] }}
+            </span>
+            <a href="{{ url_for('logout') }}" style="color: #666 !important; font-size: 13px; text-decoration: underline;">
+                Đăng xuất
+            </a>
+        </div>
+    {% else %}
+        <a href="{{ url_for('login_page') }}" style="font-weight: bold; color: #a92326 !important;">
+            👤 Đăng nhập
+        </a>
+    {% endif %}
+
+
+        </div>
+    </div>
+    <div id="divmenu" class="divmenu">
+        <nav>
+            <ul style="display: flex;flex-direction: row;">
+                <li>
+                    <a href="#">GIỚI THIỆU</a>
+                </li>
+                 <li>
+                    <a href="#">TIN TỨC SỰ KIỆN</a>
+                </li>
+                 <li>
+                    <a href="#">TUYỂN SINH</a>
+                </li>
+                 <li>
+                    <a href="#">CÔNG KHAI GIÁO DỤC</a>
+                </li>
+                 <li>
+                    <a href="#">CƠ CẤU TỔ CHỨC</a>
+                </li>
+                 <li>
+                    <a href="{{ url_for('cart') }}">🛒 GIỎ HÀNG</a>
+                </li>
+            </ul>
+
+        </nav>
+
+
+    </div>
+</div>
+
+</header>
+
+
+    <header>
+        
+
+
+
+
+
+      
+
+    <div id="noidung" style="width: 100%; min-height: 500px; background-image: url('{{ url_for('static', filename='images/nso-splash-landscape-1499x999.gif') }}'); background-size: cover;">
+        <div class="container" style="padding: 20px; background: rgba(255,255,255,0.95); min-height: 600px;">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <footer>
+        <div id="footer1">
+            <div class="content">
+                <div id="khoi1">
+                  
+                   <p>Địa chỉ: số 33 đường Vĩnh Viễn, phường Vườn Lài, Thành phố Hồ Chí Minh.</p>
+                   <p>Điện thoại: 84.28.7306.1976 - Fax: 84.28.38250359</p>
+                   <p>Email: info@kthcm.edu.vn</p>
+                </div>
+                <div id="khoi2">
+                    <p>HCE Tuyển sinh</p>
+                    <p>HCE Future</p>
+                    <p>Thông tin công khai</p>
+                </div>
+                <div id="khoi3">
+                    <p>HCE Virtual Tour</p>
+                    <p>HCE Global</p>
+                    <p>HCE Green Campus</p>
+                </div>
+                 <div id="khoi4">
+                    <p>HCE E-learning</p>
+                    <p>HCE Cơ hội nghề nghiệp</p>
+                    <p>Hệ thống nhận diện</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

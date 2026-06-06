@@ -1,0 +1,245 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<div class="home-container">
+
+    <div class="search-box"
+     style="max-width:520px;margin:20px auto;padding:20px;
+            background:#ffffff;border-radius:16px;
+            box-shadow:0 10px 25px rgba(0,0,0,0.08);
+            font-family:Arial, sans-serif;">
+
+    <h3 style="margin:0 0 14px 0;font-size:18px;
+               color:#333;text-align:center;">
+        Hệ thống tìm kiếm sản phẩm (Demo SQLi)
+    </h3>
+
+    <div style="display:flex;gap:10px;align-items:stretch;">
+
+        <input type="text"
+               id="txtSearch"
+               placeholder="Nhập chuỗi UNION..."
+               style="flex:1;padding:12px 14px;
+                      border:1px solid #ddd;border-radius:10px;
+                      font-size:14px;outline:none;
+                      box-sizing:border-box;
+                      transition:0.2s;"
+               onfocus="this.style.borderColor='#4A90E2';this.style.boxShadow='0 0 0 3px rgba(74,144,226,0.2)'"
+               onblur="this.style.borderColor='#ddd';this.style.boxShadow='none'">
+
+        <button onclick="doSearch('/api/search-safe')"
+                style="padding:12px 16px;
+                       background:#4A90E2;color:#fff;
+                       border:none;border-radius:10px;
+                       cursor:pointer;font-size:14px;
+                       white-space:nowrap;
+                       transition:0.2s;">
+            Tìm kiếm
+        </button>
+
+    </div>
+</div>
+
+
+
+    <h2 id="list-title" class="page-title">
+        Danh sách sản phẩm
+    </h2>
+
+    <div class="product-grid" id="product-container">
+
+        {% if products %}
+
+            {% for p in products %}
+
+            <div class="product-card">
+
+                <div class="product-content"
+                     onclick="window.location.href='{{ url_for('product_detail', product_id=p.id) }}'">
+
+                    <div class="product-image-wrapper">
+
+                        <img   src="{{ p.image if p.image else url_for('static', filename='images/khongcoanh.png') }}"
+                            onerror="this.src='/static/images/khongcoanh.png'" width="200">
+
+                    </div>
+
+                    <div class="product-info">
+
+                        <div class="product-title">
+
+                            {{ p.title }}
+
+                        </div>
+
+                        <div class="product-price">
+
+                            ${{ p.price }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <button class="btn-add-cart"
+                    onclick="addToCart({
+                        id: {{ p.id | tojson }},
+                        title: {{ p.title | tojson }},
+                        price: {{ p.price | tojson }},
+                        image: {{ (p.image if p.image else '/static/images/khongcoanh.png') | tojson }}
+                    })">
+
+                    🛒 Thêm vào giỏ
+
+                </button>
+
+            </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<script>
+
+function doSearch(endpoint) {
+
+    const keyword =
+        document.getElementById('txtSearch').value;
+
+    const container =
+        document.getElementById('product-container');
+
+    const titleHeader =
+        document.getElementById('list-title');
+
+    if (!keyword.trim()) {
+
+        window.location.reload();
+
+        return;
+    }
+
+    container.innerHTML =
+        '<p style="text-align:center">Đang truy vấn...</p>';
+
+    fetch(endpoint, {
+
+        method: 'POST',
+
+        headers: {
+            'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+            keyword: keyword
+        })
+
+    })
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        container.innerHTML = '';
+
+        if (!Array.isArray(data)) {
+
+            container.innerHTML =
+                `<div style="color:red;padding:20px;">
+                    ${data.message || 'Lỗi SQL'}
+                 </div>`;
+
+            return;
+        }
+
+        titleHeader.innerText =
+            endpoint.includes('unsafe')
+            ? 'KẾT QUẢ TRUY VẤN (INJECTION)'
+            : 'Kết quả tìm kiếm';
+
+        data.forEach(p => {
+
+            const card =
+                document.createElement('div');
+
+            card.className =
+                'product-card';
+
+            card.innerHTML = `
+
+                <div class="product-content"
+                     onclick="window.location.href='/product/${p.id}'">
+
+                    <div class="product-image-wrapper">
+
+                        <img
+                            src="${p.image || '/static/images/khongcoanh.png'}"
+                            onerror="this.src='/static/images/khongcoanh.png'">
+
+                    </div>
+
+                    <div class="product-info">
+
+                        <div class="product-title">
+
+                            ${p.title || 'N/A'}
+
+                        </div>
+
+                        <div class="product-price">
+
+                            $${p.price || 0}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <button class="btn-add-cart">
+
+                    🛒 Thêm vào giỏ
+
+                </button>
+
+            `;
+
+            card.querySelector('.btn-add-cart')
+                .onclick = (e) => {
+
+                    e.preventDefault();
+
+                    e.stopPropagation();
+
+                    addToCart({
+
+                        id: p.id,
+
+                        title: p.title,
+
+                        price: p.price,
+
+                        image: p.image ||
+                            '/static/images/khongcoanh.png'
+
+                    });
+
+                };
+
+            container.appendChild(card);
+
+        });
+
+    });
+
+}
+
+</script>
+
+{% endblock %}
